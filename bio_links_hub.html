@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedrals Rush Hour|| Profile And Donation Web</title>
+
+    <!-- 1. Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Segment: Konfigurasi Tailwind Custom Theme -->
+    <script src="css/tailwind-config.js"></script>
+
+    <!-- 2. FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 3. QR Code Generator CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- 4. Google Fonts: Pixelify Sans, Space Mono, Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Pixelify+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- 5. Segment: Custom CSS (Pixel Art, Glassmorphism & Scrollbar) -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body
+    class="bg-bgDark text-teal-50 font-sans min-h-screen selection:bg-teal-500/30 selection:text-teal-200 flex flex-col justify-between antialiased overflow-x-hidden relative">
+
+    <!-- ========================================================================== -->
+    <!-- SEGMENT 1: PROCEDURAL PIXEL ART BACKGROUND CANVAS & OVERLAY                -->
+    <!-- ========================================================================== -->
+    <canvas id="pixelCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+    <div class="fixed inset-0 pixel-overlay pointer-events-none z-0"></div>
+
+    <!-- UI WRAPPER -->
+    <div class="relative z-10 flex flex-col min-h-screen justify-between">
+
+        <!-- ========================================================================== -->
+        <!-- SEGMENT 2: TOP RUNNING MARQUEE BANNER (TOP SUPPORTERS / DONATUR)            -->
+        <!-- ========================================================================== -->
+        <header
+            class="w-full bg-black/80 border-b border-teal-900/50 backdrop-blur-md sticky top-0 z-30 overflow-hidden select-none">
+            <div class="py-2.5 relative flex items-center group cursor-default">
+                <div id="marqueeTrack"
+                    class="inline-block whitespace-nowrap animate-marquee group-hover:[animation-play-state:paused] font-mono text-[11px] tracking-wide text-teal-300">
+                    <!-- Konten donatur di-render dinamis dari data/links.js -->
+                </div>
+            </div>
+        </header>
+
+        <!-- ========================================================================== -->
+        <!-- SEGMENT 3: FLOATING CONTROLS (Sound Ambience, Share)                       -->
+        <!-- ========================================================================== -->
+        <div class="fixed top-14 right-4 sm:right-8 z-30 flex items-center gap-2">
+            <!-- Tombol Ambient Audio Lofi -->
+            <button onclick="toggleAudio()" id="audioBtn"
+                class="w-9 h-9 rounded-xl bg-black/75 border border-teal-800/60 text-teal-300 hover:text-white hover:border-teal-400 flex items-center justify-center transition-all duration-300 shadow-xl backdrop-blur-md active:scale-95"
+                title="Toggle Cozy Forest Ambience">
+                <i class="fa-solid fa-volume-xmark text-xs" id="audioIcon"></i>
+            </button>
+            <!-- Tombol Salin URL Halaman -->
+            <button onclick="copyCurrentPageUrl()"
+                class="w-9 h-9 rounded-xl bg-black/75 border border-teal-800/60 text-teal-300 hover:text-white hover:border-teal-400 flex items-center justify-center transition-all duration-300 shadow-xl backdrop-blur-md active:scale-95"
+                title="Copy Bio Link">
+                <i class="fa-solid fa-share-nodes text-xs"></i>
+            </button>
+        </div>
+
+        <!-- ========================================================================== -->
+        <!-- SEGMENT 4: MAIN CONTAINER                                                  -->
+        <!-- ========================================================================== -->
+        <main class="w-full max-w-md mx-auto px-4 sm:px-5 pt-6 pb-16 flex flex-col items-center">
+
+            <!-- --- SUB-SEGMENT 4A: PROFIL CREATOR --- -->
+            <section class="text-center w-full flex flex-col items-center mb-6">
+                <!-- Avatar Frame -->
+                <div class="relative mb-3.5 animate-float-soft">
+                    <div
+                        class="w-24 h-24 rounded-2xl p-[3px] bg-gradient-to-b from-teal-300/80 via-emerald-500/50 to-black/90 shadow-2xl backdrop-blur-sm">
+                        <img id="profileAvatar"
+                            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop"
+                            alt="Avatar" onerror="handleAvatarError()"
+                            class="w-full h-full object-cover rounded-xl filter contrast-105 hover:scale-105 transition-all duration-500">
+                        <div id="avatarFallback"
+                            class="hidden w-full h-full rounded-xl bg-teal-950 flex items-center justify-center font-pixel text-3xl font-bold text-teal-300">
+                            🐾
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display Name & Handle -->
+                <div class="flex items-center gap-1.5 mb-0.5">
+                    <h1 id="profileName"
+                        class="font-pixel text-3xl font-bold text-zinc-100 tracking-wide drop-shadow-md">
+                        Aulia Rahma
+                    </h1>
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm" title="Verified Creator"></i>
+                </div>
+                <p id="profileHandle"
+                    class="font-mono text-xs text-teal-400 tracking-widest uppercase mb-3 drop-shadow">
+                    @auliarahma
+                </p>
+
+                <!-- Short Bio -->
+                <p id="profileBio"
+                    class="font-sans italic text-xs text-teal-100/90 leading-relaxed max-w-xs bg-black/65 px-3.5 py-2 rounded-xl border border-teal-800/40 backdrop-blur-md shadow-md">
+                    "Relaxing at the cozy pixel pier with warm sunlight & lofi tunes."
+                </p>
+            </section>
+
+            <!-- --- SUB-SEGMENT 4B: KARTU DUKUNGAN SOCIABUZZ --- -->
+            <section class="w-full mb-5">
+                <div class="glass-card bg-cardDark rounded-2xl p-4 sm:p-5 flex flex-col gap-3.5 backdrop-blur-md">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 font-pixel text-lg shadow-inner">
+                                ☕
+                            </div>
+                            <div>
+                                <h3 class="font-pixel text-lg font-bold text-zinc-100 leading-tight">Donate Dapit
+                                    disini╰(*°▽°*)╯!
+                                </h3>
+                                <p class="font-mono text-[11px] text-teal-400/90">SociaBuzz Creator Support</p>
+                            </div>
+                        </div>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-500/15 border border-teal-500/30 font-mono text-[10px] text-teal-300">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Open
+                        </span>
+                    </div>
+
+                    <!-- Quick Preset Donation Buttons -->
+                    <div class="grid grid-cols-3 gap-2 font-mono text-xs">
+                        <button onclick="openDonationWithAmount('10000')"
+                            class="py-2 bg-black/50 hover:bg-teal-900/40 border border-teal-800/50 rounded-lg text-teal-200 transition-all text-center active:scale-95">
+                            Rp 10.000
+                        </button>
+                        <button onclick="openDonationWithAmount('25000')"
+                            class="py-2 bg-black/50 hover:bg-teal-900/40 border border-teal-800/50 rounded-lg text-teal-200 transition-all text-center active:scale-95">
+                            Rp 25.000
+                        </button>
+                        <button onclick="openDonationWithAmount('50000')"
+                            class="py-2 bg-black/50 hover:bg-teal-900/40 border border-teal-800/50 rounded-lg text-teal-200 transition-all text-center active:scale-95">
+                            Rp 50.000
+                        </button>
+                    </div>
+
+                    <!-- Main Donation Button -->
+                    <button onclick="openDonationModal()"
+                        class="w-full py-3 px-4 bg-gradient-to-r from-amber-500 via-emerald-500 to-teal-400 hover:from-amber-400 hover:to-teal-300 text-zinc-950 font-pixel text-sm font-bold uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg active:scale-[0.98]">
+                        <i class="fa-solid fa-heart text-xs"></i>
+                        <span>Traktir via SociaBuzz</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- --- SUB-SEGMENT 4C: DAFTAR TAUTAN / LINKS LIST --- -->
+            <section class="w-full space-y-2.5 mb-8">
+                <div class="flex items-center justify-between px-1 mb-1">
+                    <span class="font-pixel text-xs uppercase tracking-widest text-teal-400/90">Official Links</span>
+                    <span class="font-mono text-[10px] text-teal-500/80" id="linkCountText">0 Links</span>
+                </div>
+
+                <div id="linksContainer" class="space-y-2.5">
+                    <!-- Kartu link di-render secara dinamis dari data/links.js -->
+                </div>
+            </section>
+
+            <!-- --- SUB-SEGMENT 4D: FOOTER --- -->
+            <footer class="text-center font-mono text-[11px] text-teal-400/70 space-y-1">
+                <p class="flex items-center justify-center gap-1.5">
+                    <span>🌿</span>
+                    <span>Cozy Forest Pier Hub</span>
+                    <span>🐾</span>
+                </p>
+            </footer>
+        </main>
+
+        <!-- ========================================================================== -->
+        <!-- SEGMENT 5: MODAL DONASI & QRIS (POPUP)                                     -->
+        <!-- ========================================================================== -->
+        <div id="donationModal"
+            class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+            <div
+                class="bg-cardDark glass-card text-teal-50 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+                <button onclick="closeDonationModal()" class="absolute top-4 right-4 text-teal-400 hover:text-white p-1"
+                    title="Tutup">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+
+                <div class="text-center mb-5">
+                    <div
+                        class="w-12 h-12 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 mx-auto flex items-center justify-center mb-2 font-pixel text-xl shadow-inner">
+                        ☕
+                    </div>
+                    <h3 class="font-pixel text-xl font-bold text-zinc-100">Dukung Karya Saya</h3>
+                    <p class="font-mono text-xs text-teal-400 mt-1">Pembayaran mudah via SociaBuzz</p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl w-max mx-auto shadow-inner mb-4 flex items-center justify-center">
+                    <div id="qrcode"></div>
+                </div>
+
+                <p class="font-sans text-xs text-teal-200/90 text-center mb-5 leading-relaxed">
+                    Scan QRIS (GoPay, OVO, Dana, ShopeePay) atau klik tombol di bawah untuk membuka halaman SociaBuzz.
+                </p>
+
+                <div class="space-y-2.5">
+                    <a id="modalDirectSociaBuzzBtn" href="https://sociabuzz.com" target="_blank" rel="noopener"
+                        class="w-full py-3 bg-gradient-to-r from-amber-500 to-teal-400 hover:from-amber-400 hover:to-teal-300 text-zinc-950 font-pixel text-sm font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2">
+                        <span>Buka Halaman SociaBuzz</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+
+                    <button onclick="copySociaBuzzLink()"
+                        class="w-full py-2.5 bg-black/60 hover:bg-black/80 border border-teal-800/60 font-mono text-xs text-teal-300 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Salin Link SociaBuzz</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- ========================================================================== -->
+        <!-- SEGMENT 7: TOAST NOTIFIKASI POPUP                                          -->
+        <!-- ========================================================================== -->
+        <div id="toast"
+            class="fixed bottom-6 right-6 bg-black/90 text-teal-200 border border-teal-500/40 px-4 py-2.5 rounded-xl font-mono text-xs shadow-2xl transition-all duration-300 transform translate-y-12 opacity-0 flex items-center gap-2 pointer-events-none z-50">
+            <i class="fa-solid fa-circle-check text-teal-400"></i>
+            <span id="toastMessage">Berhasil disalin!</span>
+        </div>
+    </div>
+
+    <!-- ========================================================================== -->
+    <!-- SCRIPT & DATA SEGMENTS                                                     -->
+    <!-- ========================================================================== -->
+    <!-- 1. DATA: Input Link, Profil, dan Donatur (Edit data Anda di file ini) -->
+    <script src="data/links.js"></script>
+
+    <!-- 2. SEGMENT VISUAL: Procedural Pixel Art Canvas Engine -->
+    <script src="js/pixel-canvas.js"></script>
+
+    <!-- 3. SEGMENT AUDIO: Synthesized Cozy Ambient Lofi Music Engine -->
+    <script src="js/audio-lofi.js"></script>
+
+    <!-- 4. SEGMENT CONTROLLER: Live Editor & Modal Manager -->
+    <script src="js/editor.js"></script>
+
+    <!-- 5. SEGMENT CORE: Aplikasi Utama & Render Segment -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>
